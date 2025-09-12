@@ -1,9 +1,7 @@
  const mongoose = require('mongoose')
- const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 
 
- const AdminSchema = new mongoose.Schema({
+ const host = new mongoose.Schema({
       placename:{
         type: String,
         required: true,
@@ -18,7 +16,7 @@ const jwt = require('jsonwebtoken');
 
       contactno:{
         type: Number,
-
+           required: true
       },
         
       location:{
@@ -30,6 +28,17 @@ const jwt = require('jsonwebtoken');
       Image: {
       type: String,
       required: true
+    },
+
+
+    price:{  
+      type: Number,
+      required: true
+    },
+     
+    room:{
+      type: Number,
+
     }
 
  
