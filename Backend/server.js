@@ -3,7 +3,7 @@
  const dotenv = require("dotenv").config();
  const connectDB = require("./db/db")
  const cors = require("cors")
- const  userRoutes = require('./routes/UserRoutes')
+ const  userRoutes= require('./routes/UserRoutes')
  const cookieParser = require("cookie-parser");
 
  const app= express()
@@ -21,7 +21,7 @@
    res.send("MongoDB connected with .env 🚀");
  })
 
- app.use('/users', userRoutes )
+ app.use('/users',  userRoutes)
 
  const PORT = process.env.PORT
 
