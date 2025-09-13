@@ -5,6 +5,7 @@
  const cors = require("cors")
  const  userRoutes= require('./routes/UserRoutes')
  const  adminRoutes= require('./routes/AdminRoutes')
+ const bookingRoutes = require("./routes/BookingRoutes");
  const cookieParser = require("cookie-parser");
 
  const app= express()
@@ -24,6 +25,7 @@
 
  app.use('/users',  userRoutes)
  app.use('/admin', adminRoutes )
+ app.use("/booking", bookingRoutes);
 
  const PORT = process.env.PORT
 

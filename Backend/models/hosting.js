@@ -18,7 +18,7 @@ const hostSchema = new mongoose.Schema({
   },
 
   location: {
-    type: String, // ✅ better as String/GeoJSON instead of Number
+    type: String, 
     required: true
   },
 
@@ -36,10 +36,10 @@ const hostSchema = new mongoose.Schema({
     type: Number
   },
 
-  // 🔗 Reference to admin
+  
   admin: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "admin", // must match admin model name
+    ref: "admin", 
     required: true
   }
 });

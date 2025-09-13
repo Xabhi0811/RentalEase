@@ -1,7 +1,7 @@
-const Admin = require('./admin');
-const Hosting = require('./hosting');
+const Admin = require('../models/admin');
 
-const createHosting = async (req, res) => {
+
+module.exports.createHosting = async (req, res) => {
   try {
     const { adminId, placename, address, contactno, location, Image, price, room } = req.body;
 
@@ -30,7 +30,7 @@ const createHosting = async (req, res) => {
 };
 
 
-const getHosting = async (req, res) => {
+module.exports.getHosting = async (req, res) => {
   try {
     const hostings = await Hosting.find().populate("admin", "fullname email");
     res.json(hostings);

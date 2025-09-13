@@ -1,7 +1,7 @@
-const User = require('./userModel');
-const Booking = require('./bookingModel');
+const User = require('../models/user');
 
-const createBooking = async (req, res) => {
+
+module.exports.createBooking = async (req, res) => {
   try {
     const { userId, fullname, age, contactno, Image } = req.body;
 
