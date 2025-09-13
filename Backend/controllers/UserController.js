@@ -56,3 +56,35 @@ module.exports.registerUser = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+
+module.exports.login = async (req, res) =>{
+  try {
+
+    const error = validationResult(req);
+    if(!error.isEmpty()){
+      return res.status(400).json({error: error.array()})
+    }
+
+    const { email , password} = req.body
+    const user = await userModel.findOne({email}).select("+password")
+
+    if(!user){
+      return res.status(401).json({error: "Invalid email and password"})
+    }
+      
+   const isMatch = await user.comparePassword(password)
+   if(!isMatch){
+    return res.status(401).json({error: "Invalid password"})
+   }
+   const token = user.generateAuthToken()
+   res.cookie('token', token)
+   res.status(200).json({token , user})
+
+
+  } catch (error) {
+     console.error(error);
+    res.status(500).json({ error: "login error" });
+    
+  }
+}

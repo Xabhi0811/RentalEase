@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { body } = require("express-validator"); 
-const {registerUser} = require("../controllers/UserController")
+const {registerUser , login} = require("../controllers/UserController")
 
 // SIGNIN route
 router.post('/signin', [
@@ -21,7 +21,7 @@ router.post('/login', [
     .withMessage('Password must be at least 6 characters long')
 ], (req, res) => {
   res.send("Login route working with validation");
-});
+}, login);
 
 // LOGOUT route
 router.get('/logout', (req, res) => {
