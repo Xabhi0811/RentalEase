@@ -6,6 +6,7 @@
  const  userRoutes= require('./routes/UserRoutes')
  const  adminRoutes= require('./routes/AdminRoutes')
  const bookingRoutes = require("./routes/BookingRoutes");
+ const hostingRoutes = require('./routes/hostingRoutes');
  const cookieParser = require("cookie-parser");
 
  const app= express()
@@ -26,6 +27,8 @@
  app.use('/users',  userRoutes)
  app.use('/admin', adminRoutes )
  app.use("/booking", bookingRoutes);
+app.use('/hosting', hostingRoutes);
+
 
  const PORT = process.env.PORT
 
