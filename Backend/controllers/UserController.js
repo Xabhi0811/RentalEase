@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 
 module.exports.registerUser = async (req, res) => {
   try {
-    // validate inputs
+    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -17,16 +17,15 @@ module.exports.registerUser = async (req, res) => {
       return res.status(400).json({ error: "All fields are required" });
     }
 
-    // check if user exists
+    
     const isUserAlready = await userModel.findOne({ email });
     if (isUserAlready) {
       return res.status(400).json({ error: "User already exists" });
     }
 
-    // hash password
+    
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // create new user
     const newUser = new userModel({
       fullname,
       email,
@@ -35,10 +34,10 @@ module.exports.registerUser = async (req, res) => {
 
     await newUser.save();
 
-    // generate token
+  
     const token = jwt.sign(
       { id: newUser._id, email: newUser.email },
-      process.env.JWT_SECRET || "secretkey", // make sure you set JWT_SECRET in .env
+      process.env.JWT_SECRET || "secretkey", 
       { expiresIn: "1h" }
     );
 

@@ -4,6 +4,7 @@
  const connectDB = require("./db/db")
  const cors = require("cors")
  const  userRoutes= require('./routes/UserRoutes')
+ const  adminRoutes= require('./routes/AdminRoutes')
  const cookieParser = require("cookie-parser");
 
  const app= express()
@@ -22,6 +23,7 @@
  })
 
  app.use('/users',  userRoutes)
+ app.use('/admin', adminRoutes )
 
  const PORT = process.env.PORT
 
