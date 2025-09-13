@@ -6,13 +6,12 @@ import {
   FaBed,
   FaBath,
   FaRulerCombined,
-  FaUtensils,
-  FaWifi,
   FaFacebookF,
   FaTwitter,
   FaInstagram,
   FaLinkedinIn,
   FaPaperPlane,
+  FaGithub
 } from "react-icons/fa";
 
 const Home = () => {
@@ -78,7 +77,7 @@ const Home = () => {
       <section 
         className="pt-32 pb-20 text-white hero-bg"
         style={{
-          background: "linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1522708323590-d24dbb6b0267') center/cover"
+          background: "linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1522708323590-d24dbb6b0267') center/cover"
         }}
       >
         <div className="container mx-auto px-4 text-center">
@@ -92,17 +91,24 @@ const Home = () => {
 
           <div className="bg-white p-6 rounded-xl shadow-xl max-w-3xl mx-auto transform transition-all duration-300 hover:shadow-2xl">
             <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
-              <select className="flex-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                <option>Select Property Type</option>
-                <option>Apartment/Flat</option>
-                <option>PG/Hostel</option>
-                <option>Private Room</option>
-                <option>Full House</option>
-              </select>
+              <div className="flex-1 relative">
+                <select className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white text-gray-700">
+                  <option className="text-gray-400">Select Property Type</option>
+                  <option className="text-gray-700">Apartment/Flat</option>
+                  <option className="text-gray-700">PG/Hostel</option>
+                  <option className="text-gray-700">Private Room</option>
+                  <option className="text-gray-700">Full House</option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                  </svg>
+                </div>
+              </div>
               <input
                 type="text"
                 placeholder="Enter Location"
-                className="flex-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="flex-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-500 bg-white text-gray-700"
               />
               <button className="flex-1 w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
                 Search
@@ -321,8 +327,8 @@ const Home = () => {
             <div>
               <h4 className="font-semibold mb-4 text-lg">Connect With Us</h4>
               <div className="flex space-x-3 mb-6">
-                <a className="bg-gray-800 hover:bg-blue-600 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 transform hover:-translate-y-1">
-                  <FaFacebookF />
+                <a className="bg-gray-800 hover:bg-gray-700 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 transform hover:-translate-y-1">
+                  <FaGithub />
                 </a>
                 <a className="bg-gray-800 hover:bg-blue-400 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 transform hover:-translate-y-1">
                   <FaTwitter />
@@ -339,7 +345,7 @@ const Home = () => {
                 <input
                   type="email"
                   placeholder="Your email"
-                  className="px-4 py-3 w-full bg-white-100 text-white-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-4 py-3 w-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500"
                 />
                 <button className="bg-blue-600 hover:bg-blue-700 px-4 py-3 transition-all duration-300">
                   <FaPaperPlane />
