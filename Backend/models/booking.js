@@ -1,34 +1,38 @@
-const mongoose = require('mongoose');
-const {user} = require('../models/user')
+// models/booking.js
+const mongoose = require("mongoose");
 
-const BookingSchema = new mongoose.Schema({
-  fullname: {
-    type: String,
-    required: true,
-    maxlength: [18, 'Name of place must be in 18 characters long']
-  },
-
-  age: {
-    type: Number,
-    required: true
-  },
-
-  contactno: {
-    type: Number,
-  },
-
-  Image: {
-    type: String,
-    required: true
-  },
-
-  // 🔗 Reference to User model
+const bookingSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "user", // must match model name in userModel
+    ref: "User", // assuming you already have a User model
     required: true
+  },
+  hosting: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Hosting", // link to hosting (hotel/pg/guesthouse)
+    required: true
+  },
+  checkIn: {
+    type: Date,
+    required: true
+  },
+  checkOut: {
+    type: Date,
+    required: true
+  },
+  guests: {
+    type: Number,
+    required: true
+  },
+  totalPrice: {
+    type: Number,
+    required: true
+  },
+  status: {
+    type: String,
+    enum: ["pending", "confirmed", "cancelled"],
+    default: "pending"
   }
-});
+}, { timestamps: true });
 
-const bookingModel = mongoose.model('booking', BookingSchema);
-module.exports = bookingModel;
+module.exports = mongoose.model("Booking", bookingSchema);

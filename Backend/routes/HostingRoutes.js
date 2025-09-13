@@ -1,24 +1,29 @@
 const express = require('express');
 const router = express.Router();
+const { body } = require("express-validator");
 const {createHosting , getHosting} = require('../controllers/HostController');
   // Make sure to import your Hosting model
 
 // Create hosting (Admin only)
-router.post('/create', createHosting);
+router.post(
+  "/create",
+  [
+    body("ownername").notEmpty().withMessage("Owner name is required"),
+    body("placename").notEmpty().withMessage("Place name is required"),
+    body("address").notEmpty().withMessage("Address is required"),
+    body("contactno").isNumeric().withMessage("Contact number must be numeric"),
+    body("email").isEmail().withMessage("Valid email is required"),
+    body("price").isNumeric().withMessage("Price must be a number"),
+    body("room").isNumeric().withMessage("Room count must be a number"),
+    body("Image").notEmpty().withMessage("Image URL is required"),
+  ],
+  createHosting
+);
 
 // Get all hostings
 router.get('/all', getHosting);
 
-// Get hosting by ID
-router.get('/:id', async (req, res) => {
-  try {
-    const hosting = await Hosting.findById(req.params.id).populate("admin", "fullname email");
-    if (!hosting) return res.status(404).json({ message: "Hosting not found" });
-    res.json(hosting);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+
 
 // Update hosting by ID
 router.put('/:id', async (req, res) => {
@@ -45,16 +50,6 @@ router.delete('/:id', async (req, res) => {
     const hosting = await Hosting.findByIdAndDelete(req.params.id);
     if (!hosting) return res.status(404).json({ message: "Hosting not found" });
     res.json({ message: "Hosting deleted successfully" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Get hostings by admin ID
-router.get('/admin/:adminId', async (req, res) => {
-  try {
-    const hostings = await Hosting.find({ admin: req.params.adminId }).populate("admin", "fullname email");
-    res.json(hostings);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

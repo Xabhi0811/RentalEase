@@ -1,26 +1,37 @@
-const User = require('../models/user');
-
+// controllers/bookingController.js
+const Booking = require("../models/booking");
+const Hosting = require("../models/hosting");
 
 module.exports.createBooking = async (req, res) => {
   try {
-    const { userId, fullname, age, contactno, Image } = req.body;
+    const { hostingId, checkIn, checkOut, guests } = req.body;
 
-    // check if user exists
-    const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: "User not found" });
+    // get hosting details
+    const hosting = await Hosting.findById(hostingId);
+    if (!hosting) {
+      return res.status(404).json({ error: "Hosting not found" });
+    }
 
-    // create booking linked to user
+    // calculate total price (example: price * number of nights)
+    const days = Math.ceil((new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24));
+    const totalPrice = hosting.price * days;
+
     const booking = new Booking({
-      fullname,
-      age,
-      contactno,
-      Image,
-      user: user._id
+      user: req.user.id, // user should be logged in
+      hosting: hostingId,
+      checkIn,
+      checkOut,
+      guests,
+      totalPrice
     });
 
     await booking.save();
 
-    res.status(201).json({ message: "Booking created successfully", booking });
+    res.status(201).json({
+      message: "Booking created successfully",
+      booking
+    });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

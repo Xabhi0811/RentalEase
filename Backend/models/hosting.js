@@ -1,6 +1,13 @@
 const mongoose = require('mongoose');
 
+
 const hostSchema = new mongoose.Schema({
+   ownername:{
+     type: String,
+     required: true,
+     minlength: [3, 'name of place must be in 3 characters long']
+   },
+
   placename: {
     type: String,
     required: true,
@@ -37,11 +44,6 @@ const hostSchema = new mongoose.Schema({
   },
 
   
-  admin: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "admin", 
-    required: true
-  }
 });
 
 const hostingModel = mongoose.model('hosting', hostSchema);
