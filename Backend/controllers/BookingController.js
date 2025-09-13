@@ -13,7 +13,9 @@ module.exports.createBooking = async (req, res) => {
     }
 
     // calculate total price (example: price * number of nights)
-    const days = Math.ceil((new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24));
+    const days = Math.ceil(
+      (new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24)
+    );
     const totalPrice = hosting.price * days;
 
     const booking = new Booking({
@@ -22,17 +24,32 @@ module.exports.createBooking = async (req, res) => {
       checkIn,
       checkOut,
       guests,
-      totalPrice
+      totalPrice,
     });
 
     await booking.save();
 
     res.status(201).json({
       message: "Booking created successfully",
-      booking
+      booking: {
+        ...booking.toObject(),
+        checkIn: new Date(booking.checkIn).toLocaleString("en-IN", {
+          timeZone: "Asia/Kolkata",
+        }),
+        checkOut: new Date(booking.checkOut).toLocaleString("en-IN", {
+          timeZone: "Asia/Kolkata",
+        }),
+        createdAt: new Date(booking.createdAt).toLocaleString("en-IN", {
+          timeZone: "Asia/Kolkata",
+        }),
+        updatedAt: new Date(booking.updatedAt).toLocaleString("en-IN", {
+          timeZone: "Asia/Kolkata",
+        }),
+      },
     });
-
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
+
