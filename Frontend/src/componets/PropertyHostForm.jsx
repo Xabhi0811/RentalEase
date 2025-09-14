@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const PropertyHostForm = () => {
   const [formData, setFormData] = useState({
@@ -16,11 +17,16 @@ const PropertyHostForm = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
+   // redirect after success
+ const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+     const Navigate =  navigate 
     setFormData({
       ...formData,
+      price: Number(formData.price),
+    room: Number(formData.room),
       [name]: value
     });
     // Clear error when user starts typing
@@ -48,33 +54,46 @@ const PropertyHostForm = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
       setIsLoading(true);
       try {
-        const response = await axios.post('/api/hosting', formData);
-        setMessage({ text: 'Property hosted successfully!', type: 'success' });
-        // Reset form
-        setFormData({
-          ownername: '',
-          placename: '',
-          address: '',
-          contactno: '',
-          location: '',
-          Image: '',
-          price: '',
-          room: '',
-          email: ''
-        });
-      } catch (error) {
-        console.error('Error hosting property:', error);
-        setMessage({ 
-          text: error.response?.data?.message || 'Failed to host property. Please try again.', 
-          type: 'error' 
-        });
-      } finally {
+  const response = await axios.post(
+    `${import.meta.env.VITE_BACKEND_URL}/hosting/create`,
+    formData
+  );
+
+  if (response.status === 201) {
+    const data = response.data;
+
+    setMessage({ text: 'Property hosted successfully!', type: 'success' });
+
+    // Reset form
+    setFormData({
+      ownername: '',
+      placename: '',
+      address: '',
+      contactno: '',
+      location: '',
+      Image: '',
+      price: '',
+      room: '',
+      email: ''
+    });
+
+    navigate('/'); // redirect after success
+  }
+} catch (error) {
+  console.error('Error hosting property:', error);
+  setMessage({
+    text:
+      error.response?.data?.message ||
+      'Failed to host property. Please try again.',
+    type: 'error'
+  });
+}
+ finally {
         setIsLoading(false);
       }
     }

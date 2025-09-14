@@ -42,6 +42,10 @@ const hostSchema = new mongoose.Schema({
   room: {
     type: Number
   },
+  email: { type: String, required: true, unique: true }
+
+
+
 
   
 });

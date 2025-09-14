@@ -7,16 +7,17 @@ const {createHosting , getHosting} = require('../controllers/HostController');
 // Create hosting (Admin only)
 router.post(
   "/create",
+  
   [
     body("ownername").notEmpty().withMessage("Owner name is required"),
     body("placename").notEmpty().withMessage("Place name is required"),
     body("address").notEmpty().withMessage("Address is required"),
     body("contactno").isNumeric().withMessage("Contact number must be numeric"),
-    body("email").isEmail().withMessage("Valid email is required"),
     body("price").isNumeric().withMessage("Price must be a number"),
+    body("email").isEmail().withMessage("it must be email "),
     body("room").isNumeric().withMessage("Room count must be a number"),
     body("Image").notEmpty().withMessage("Image URL is required"),
-  ],
+  ], 
   createHosting
 );
 

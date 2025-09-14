@@ -9,18 +9,18 @@ module.exports.createHosting = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { ownername, placename, address, contactno, location, Image, price, room, email } = req.body;
+    const { ownername, placename, address, contactno, location, Image, price, room , email } = req.body;
 
     // Check required fields (optional if already handled by express-validator)
-    if (!ownername || !placename || !address || !contactno || !Image || !price || !room || !email) {
+    if (!ownername || !placename || !address || !contactno || !Image || !price || !room || !email ) {
       return res.status(400).json({ error: "All fields are required" });
     }
-
-    // Check if hosting already exists by email
-    const isHostingAlready = await hostingModel.findOne({ email });
+  const isHostingAlready = await hostingModel.findOne({ email });
     if (isHostingAlready) {
       return res.status(400).json({ error: "Hosting already exists with this email" });
     }
+    // Check if hosting already exists by email
+   
 
     // Create hosting
     const hosting = new hostingModel({
@@ -32,7 +32,8 @@ module.exports.createHosting = async (req, res) => {
       Image,
       price,
       room,
-      email,
+      email
+     
     });
 
     await hosting.save();

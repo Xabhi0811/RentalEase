@@ -13,11 +13,12 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/" element={<Home/>} />
+         
           <Route path="/user/login" element={<UserLogin />} />
           <Route path="/user/signup" element={<UserSignup />} />
           <Route path="/owner/login" element={<OwnerLogin />} />
           <Route path="/owner/signup" element={<OwnerSignup />} />
+           <Route path="/" element={<Home/>} />
             <Route path="/property-host-form" element={<PropertyHostForm />} />
             <Route path='/list' element={<HostingList/>} />
             <Route path='/us' element={<Contact/>}/>
