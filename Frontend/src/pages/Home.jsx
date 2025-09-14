@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import {
   FaHome,
   FaBars,
@@ -13,6 +14,7 @@ import {
   FaPaperPlane,
   FaGithub
 } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -44,12 +46,12 @@ const Home = () => {
           </div>
           {/* Buttons */}
           <div className="flex items-center space-x-4">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg">
-              Sign In
-            </button>
-            <button className="hidden md:block bg-white hover:bg-gray-100 text-gray-800 px-4 py-2 rounded-lg transition-all duration-300 border border-gray-300 hover:border-gray-400 shadow-sm">
-              Sign Up
-            </button>
+            <Link to="/property-host-form" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg">
+              List Property
+            </Link>
+            <Link to="/list" className="hidden md:block bg-white hover:bg-gray-100 text-gray-800 px-4 py-2 rounded-lg transition-all duration-300 border border-gray-300 hover:border-gray-400 shadow-sm">
+              All properties
+            </Link>
             <button
               className="md:hidden text-gray-700 p-2 rounded-lg hover:bg-gray-100 transition-colors"
               onClick={() => setMenuOpen(!menuOpen)}
