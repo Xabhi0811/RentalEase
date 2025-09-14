@@ -6,6 +6,8 @@ import OwnerLogin from './pages/OwnerLogin'
 import OwnerSignup from './pages/OwnerSignup' 
 import PropertyHostForm from "./componets/PropertyHostForm"
 import HostingList from './componets/HostingList';
+import Contact from './componets/Contact';
+import HowItWorks  from './componets/HowItWorks';
 function App() {
   return (
     <Router>
@@ -18,7 +20,8 @@ function App() {
           <Route path="/owner/signup" element={<OwnerSignup />} />
             <Route path="/property-host-form" element={<PropertyHostForm />} />
             <Route path='/list' element={<HostingList/>} />
-          
+            <Route path='/us' element={<Contact/>}/>
+            <Route path='/WORK' element={< HowItWorks/>}/>
         </Routes>
       </div>
     </Router>

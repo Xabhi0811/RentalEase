@@ -7,7 +7,6 @@ import {
   FaBed,
   FaBath,
   FaRulerCombined,
-  FaFacebookF,
   FaTwitter,
   FaInstagram,
   FaLinkedinIn,
@@ -31,18 +30,18 @@ const Home = () => {
           </div>
           {/* Desktop Links */}
           <div className="hidden md:flex space-x-10">
-            <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors duration-300 font-medium">
+            <Link to="/" className="text-gray-700 hover:text-blue-600 transition-colors duration-300 font-medium">
               Home
-            </a>
-            <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors duration-300 font-medium">
+            </Link>
+            <Link to="/us" className="text-gray-700 hover:text-blue-600 transition-colors duration-300 font-medium">
               Properties
-            </a>
-            <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors duration-300 font-medium">
+            </Link>
+            <Link to="/WORK" className="text-gray-700 hover:text-blue-600 transition-colors duration-300 font-medium">
               How It Works
-            </a>
-            <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors duration-300 font-medium">
+            </Link>
+            <Link to="/us" className="text-gray-700 hover:text-blue-600 transition-colors duration-300 font-medium">
               Contact
-            </a>
+            </Link>
           </div>
           {/* Buttons */}
           <div className="flex items-center space-x-4">
@@ -64,10 +63,10 @@ const Home = () => {
         {/* Mobile Menu */}
         {menuOpen && (
           <div className="md:hidden bg-white py-4 px-4 shadow-lg">
-            <a href="#" className="block py-2 text-gray-700 hover:text-blue-600 transition-colors">Home</a>
-            <a href="#" className="block py-2 text-gray-700 hover:text-blue-600 transition-colors">Properties</a>
-            <a href="#" className="block py-2 text-gray-700 hover:text-blue-600 transition-colors">How It Works</a>
-            <a href="#" className="block py-2 text-gray-700 hover:text-blue-600 transition-colors">Contact</a>
+            <Link to="/" className="block py-2 text-gray-700 hover:text-blue-600 transition-colors">Home</Link>
+            <Link to="/us" className="block py-2 text-gray-700 hover:text-blue-600 transition-colors">Properties</Link>
+            <Link to="/WORK" className="block py-2 text-gray-700 hover:text-blue-600 transition-colors">How It Works</Link>
+         <Link to="/us" className="block py-2 text-gray-700 hover:text-blue-600 transition-colors">Contact</Link>
             <button className="mt-2 w-full bg-white hover:bg-gray-100 text-gray-800 py-2 rounded-lg transition-all border border-gray-300">
               Sign Up
             </button>
@@ -280,24 +279,24 @@ const Home = () => {
               <h4 className="font-semibold mb-4 text-lg">Quick Links</h4>
               <ul className="space-y-3">
                 <li>
-                  <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors duration-300">
+                  <Link to='/' className="text-gray-400 hover:text-blue-400 transition-colors duration-300">
                     Home
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors duration-300">
+                  <Link to='/us' className="text-gray-400 hover:text-blue-400 transition-colors duration-300">
                     Properties
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors duration-300">
+                  <Link to='/WORK' className="text-gray-400 hover:text-blue-400 transition-colors duration-300">
                     How It Works
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors duration-300">
+                  <Link to='/us' className="text-gray-400 hover:text-blue-400 transition-colors duration-300">
                     Contact Us
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
