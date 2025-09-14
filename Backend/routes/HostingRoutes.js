@@ -1,6 +1,8 @@
 const express = require('express');
+const mongoose = require('mongoose')
 const router = express.Router();
 const { body } = require("express-validator");
+const hostingModel = require('../models/hosting');
 const {createHosting , getHosting} = require('../controllers/HostController');
   // Make sure to import your Hosting model
 
@@ -26,21 +28,22 @@ router.get('/all', getHosting);
 
 
 
-// Update hosting by ID
-router.put('/:id', async (req, res) => {
-  try {
-    const { placename, address, contactno, location, Image, price, room } = req.body;
-    
-    const hosting = await Hosting.findByIdAndUpdate(
-      req.params.id,
-      { placename, address, contactno, location, Image, price, room },
-      { new: true, runValidators: true }
-    ).populate("admin", "fullname email");
+// Get hosting by ID
 
-    if (!hosting) return res.status(404).json({ message: "Hosting not found" });
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
     
-    res.json({ message: "Hosting updated successfully", hosting });
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid property ID" });
+    }
+
+    const hosting = await Hosting.findById(id);
+    if (!hosting) return res.status(404).json({ message: "Hosting not found" });
+
+    res.json(hosting);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -48,7 +51,7 @@ router.put('/:id', async (req, res) => {
 // Delete hosting by ID
 router.delete('/:id', async (req, res) => {
   try {
-    const hosting = await Hosting.findByIdAndDelete(req.params.id);
+    const hosting = await hostingModel.findByIdAndDelete(req.params.id);
     if (!hosting) return res.status(404).json({ message: "Hosting not found" });
     res.json({ message: "Hosting deleted successfully" });
   } catch (err) {

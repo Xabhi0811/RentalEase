@@ -26,8 +26,9 @@ function App() {
             <Route path='/list' element={<HostingList/>} />
             <Route path='/us' element={<Contact/>}/>
             <Route path='/WORK' element={< HowItWorks/>}/>
-            <Route path='/section' element={< SectionPages/>}/>
+            <Route path='/section/:propertyId' element={< SectionPages/>}/>
             <Route path='/booking' element={<Booking/>}/>
+
         </Routes>
       </div>
     </Router>

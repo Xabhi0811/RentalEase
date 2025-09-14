@@ -30,7 +30,7 @@ const HostingList = () => {
 
   const handlePropertyClick = (propertyId) => {
     // Navigate to booking page with the property ID
-    navigate(`/booking/${propertyId}`);
+    navigate(`/section/${propertyId}`);
   };
 
   if (isLoading) {
