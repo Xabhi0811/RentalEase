@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const HostingList = () => {
   const [properties, setProperties] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProperties();
@@ -24,6 +26,11 @@ const HostingList = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handlePropertyClick = (propertyId) => {
+    // Navigate to booking page with the property ID
+    navigate(`/booking/${propertyId}`);
   };
 
   if (isLoading) {
@@ -80,7 +87,11 @@ const HostingList = () => {
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {properties.map((property) => (
-              <div key={property._id} className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 border border-blue-100">
+              <div 
+                key={property._id} 
+                className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 border border-blue-100 cursor-pointer"
+                onClick={() => handlePropertyClick(property._id)}
+              >
                 <div className="h-48 overflow-hidden relative">
                   <img 
                     src={property.Image} 
