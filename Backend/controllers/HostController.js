@@ -52,9 +52,11 @@ module.exports.createHosting = async (req, res) => {
 
 module.exports.getHosting = async (req, res) => {
   try {
-    const hostings = await Hosting.find().populate("admin", "fullname email");
+    const hostings = await hostingModel.find(); // no populate
     res.json(hostings);
   } catch (err) {
+    console.error("Error fetching hostings:", err); // debug log
     res.status(500).json({ error: err.message });
   }
 };
+
