@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const UserSignup = () => {
+const OwnerSignup = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -40,7 +40,7 @@ const UserSignup = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log('User Signup Data:', formData);
+      console.log('Owner Signup Data:', formData);
       // Here you would typically make an API call
     }
   };
@@ -50,7 +50,7 @@ const UserSignup = () => {
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            User Sign Up
+            Property Owner Sign Up
           </h2>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -124,7 +124,7 @@ const UserSignup = () => {
           
           <div className="text-center">
             <Link 
-              to="/user/login" 
+              to="/owner/login" 
               className="font-medium text-indigo-600 hover:text-indigo-500"
             >
               Already have an account? Sign in here
@@ -136,4 +136,4 @@ const UserSignup = () => {
   );
 };
 
-export default UserSignup;
+export default OwnerSignup;

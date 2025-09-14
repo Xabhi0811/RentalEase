@@ -12,14 +12,14 @@ module.exports.createBooking = async (req, res) => {
       return res.status(404).json({ error: "Hosting not found" });
     }
 
-    // calculate total price (example: price * number of nights)
+  
     const days = Math.ceil(
       (new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24)
     );
     const totalPrice = hosting.price * days;
 
     const booking = new Booking({
-      user: req.user.id, // user should be logged in
+      user: req.user.id, 
       hosting: hostingId,
       checkIn,
       checkOut,
