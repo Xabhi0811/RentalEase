@@ -1,5 +1,4 @@
-// components/UserLogin.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const UserLogin = () => {
@@ -8,6 +7,7 @@ const UserLogin = () => {
     password: ''
   });
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -15,7 +15,6 @@ const UserLogin = () => {
       ...formData,
       [name]: value
     });
-    
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors({
@@ -28,78 +27,75 @@ const UserLogin = () => {
   const validateForm = () => {
     const newErrors = {};
     
-    if (!formData.email) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
-    }
+    if (!formData.email) newErrors.email = 'Email is required';
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email is invalid';
     
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
+    if (!formData.password) newErrors.password = 'Password is required';
+    else if (formData.password.length < 6) {
       newErrors.password = 'Password must be at least 6 characters';
     }
     
-    return newErrors;
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newErrors = validateForm();
-    
-    if (Object.keys(newErrors).length === 0) {
-      console.log('User Login Data:', formData);
-      alert('Login successful! (This is a demo)');
-      // Here you would typically handle the login logic
-    } else {
-      setErrors(newErrors);
+    if (validateForm()) {
+      setIsLoading(true);
+      // Simulate API call
+      setTimeout(() => {
+        console.log('User Login Data:', formData);
+        setIsLoading(false);
+      }, 1500);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-blue-600">User Login</h2>
-          <p className="text-gray-600 mt-2">Sign in to your account</p>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-2xl shadow-xl border border-gray-100">
+        <div className="text-center">
+          <div className="mx-auto h-12 w-12 bg-indigo-600 rounded-full flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+          <h2 className="mt-6 text-3xl font-bold text-gray-900">
+            User Login
+          </h2>
+          <p className="mt-2 text-sm text-gray-600">
+            Welcome back! Please sign in to your account
+          </p>
         </div>
-        
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email address
-            </label>
-            <div className="mt-1">
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
               <input
                 id="email"
                 name="email"
                 type="email"
                 autoComplete="email"
+                className={`relative block w-full px-4 py-3 border ${errors.email ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'} placeholder-gray-400 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-opacity-50 transition duration-150 ease-in-out sm:text-sm`}
+                placeholder="Enter your email"
                 value={formData.email}
                 onChange={handleChange}
-                className={`appearance-none block w-full px-3 py-2 border ${errors.email ? 'border-red-300' : 'border-gray-300'} rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
-                placeholder="Enter your email"
               />
-              {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+              {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email}</p>}
             </div>
-          </div>
-
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <div className="mt-1">
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
               <input
                 id="password"
                 name="password"
                 type="password"
                 autoComplete="current-password"
+                className={`relative block w-full px-4 py-3 border ${errors.password ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'} placeholder-gray-400 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-opacity-50 transition duration-150 ease-in-out sm:text-sm`}
+                placeholder="Enter your password"
                 value={formData.password}
                 onChange={handleChange}
-                className={`appearance-none block w-full px-3 py-2 border ${errors.password ? 'border-red-300' : 'border-gray-300'} rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
-                placeholder="Enter your password"
               />
-              {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
+              {errors.password && <p className="mt-1 text-xs text-red-600">{errors.password}</p>}
             </div>
           </div>
 
@@ -109,15 +105,15 @@ const UserLogin = () => {
                 id="remember-me"
                 name="remember-me"
                 type="checkbox"
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
               />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
                 Remember me
               </label>
             </div>
 
             <div className="text-sm">
-              <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+              <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500 transition duration-150 ease-in-out">
                 Forgot your password?
               </a>
             </div>
@@ -126,53 +122,31 @@ const UserLogin = () => {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              disabled={isLoading}
+              className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out ${isLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
             >
-              Sign in
+              {isLoading ? (
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              ) : null}
+              {isLoading ? 'Signing in...' : 'Sign in'}
             </button>
+          </div>
+          
+          <div className="text-center">
+            <p className="text-sm text-gray-600">
+              Don't have an account?{' '}
+              <Link 
+                to="/user/signup" 
+                className="font-medium text-indigo-600 hover:text-indigo-500 transition duration-150 ease-in-out"
+              >
+                Sign up here
+              </Link>
+            </p>
           </div>
         </form>
-
-        <div className="mt-6">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or</span>
-            </div>
-          </div>
-
-          <div className="mt-6 grid grid-cols-2 gap-3">
-            <button
-              type="button"
-              className="inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              <i className="fab fa-google text-red-500 mr-2"></i> Google
-            </button>
-            <button
-              type="button"
-              className="inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              <i className="fab fa-facebook text-blue-600 mr-2"></i> Facebook
-            </button>
-          </div>
-        </div>
-
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
-            Don't have an account?{' '}
-            <Link to="/user/signup" className="font-medium text-blue-600 hover:text-blue-500">
-              Sign up here
-            </Link>
-          </p>
-        </div>
-        
-        <div className="mt-4 text-center">
-          <Link to="/" className="text-sm text-gray-600 hover:text-gray-900">
-            <i className="fas fa-arrow-left mr-1"></i> Back to home
-          </Link>
-        </div>
       </div>
     </div>
   );
