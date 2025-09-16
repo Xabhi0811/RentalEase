@@ -31,7 +31,24 @@ const BookingForm = ({ propertyId, token }) => {
         setMessage("Please fill all required fields");
         return;
       }
+      
+      // Additional validation for step 1 fields
+      if (formData.contactno.replace(/\D/g, '').length !== 10) {
+        setMessage("Please enter a valid 10-digit contact number");
+        return;
+      }
+      
+      if (formData.adharno.replace(/\D/g, '').length !== 12) {
+        setMessage("Please enter a valid 12-digit Aadhar number");
+        return;
+      }
+      
+      if (parseInt(formData.age) < 18 || parseInt(formData.age) > 100) {
+        setMessage("Age must be between 18 and 100");
+        return;
+      }
     }
+    
     setCurrentStep(currentStep + 1);
     setMessage(""); // Clear any previous messages
   };
@@ -43,6 +60,30 @@ const BookingForm = ({ propertyId, token }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate step 2 before submitting
+    if (currentStep === 2) {
+      if (!formData.checkIn || !formData.checkOut) {
+        setMessage("Please select both check-in and check-out dates");
+        return;
+      }
+      
+      const checkInDate = new Date(formData.checkIn);
+      const checkOutDate = new Date(formData.checkOut);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      if (checkInDate < today) {
+        setMessage("Check-in date cannot be in the past");
+        return;
+      }
+      
+      if (checkOutDate <= checkInDate) {
+        setMessage("Check-out date must be after check-in date");
+        return;
+      }
+    }
+    
     setLoading(true);
     setMessage("");
 
@@ -290,7 +331,7 @@ const BookingForm = ({ propertyId, token }) => {
                 value={formData.checkOut}
                 onChange={handleChange}
                 required
-                min={minCheckOutDate}
+                min={minCheckOutDate || new Date().toISOString().split('T')[0]}
                 className="w-full rounded-lg border border-blue-100 p-3.5 shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200 outline-none bg-blue-50/30"
               />
               <span className="absolute right-3 top-3.5 text-blue-400">
