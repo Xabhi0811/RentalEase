@@ -33,7 +33,7 @@ const Home = () => {
             <Link to="/" className="text-gray-700 hover:text-blue-600 transition-colors duration-300 font-medium">
               Home
             </Link>
-            <Link to="/us" className="text-gray-700 hover:text-blue-600 transition-colors duration-300 font-medium">
+            <Link to="/list" className="text-gray-700 hover:text-blue-600 transition-colors duration-300 font-medium">
               Properties
             </Link>
             <Link to="/WORK" className="text-gray-700 hover:text-blue-600 transition-colors duration-300 font-medium">
@@ -64,7 +64,7 @@ const Home = () => {
         {menuOpen && (
           <div className="md:hidden bg-white py-4 px-4 shadow-lg">
             <Link to="/" className="block py-2 text-gray-700 hover:text-blue-600 transition-colors">Home</Link>
-            <Link to="/us" className="block py-2 text-gray-700 hover:text-blue-600 transition-colors">Properties</Link>
+            <Link to="/list" className="block py-2 text-gray-700 hover:text-blue-600 transition-colors">Properties</Link>
             <Link to="/WORK" className="block py-2 text-gray-700 hover:text-blue-600 transition-colors">How It Works</Link>
          <Link to="/us" className="block py-2 text-gray-700 hover:text-blue-600 transition-colors">Contact</Link>
             <button className="mt-2 w-full bg-white hover:bg-gray-100 text-gray-800 py-2 rounded-lg transition-all border border-gray-300">
@@ -253,9 +253,9 @@ const Home = () => {
           </div>
 
           <div className="text-center mt-12">
-            <button className="bg-white hover:bg-blue-600 text-blue-600 hover:text-white font-semibold px-8 py-3 rounded-lg border-2 border-blue-600 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+            <Link to="/list" className="bg-white hover:bg-blue-600 text-blue-600 hover:text-white font-semibold px-8 py-3 rounded-lg border-2 border-blue-600 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
               Browse All Properties
-            </button>
+            </Link>
           </div>
         </div>
       </section>
@@ -284,7 +284,7 @@ const Home = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link to='/us' className="text-gray-400 hover:text-blue-400 transition-colors duration-300">
+                  <Link to='/list' className="text-gray-400 hover:text-blue-400 transition-colors duration-300">
                     Properties
                   </Link>
                 </li>

@@ -4,12 +4,28 @@ const mongoose = require("mongoose");
 const bookingSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // assuming you already have a User model
+    ref: "User",
+    required: true
+  },
+  fullname: {
+    type: String,
+    required: true,
+  },
+  contactno: {
+    type: Number,
+    required: true,
+  },
+  adharno: {
+    type: String,
+    required: true
+  },
+  age: {
+    type: Number,
     required: true
   },
   hosting: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Hosting", // link to hosting (hotel/pg/guesthouse)
+    ref: "Hosting",
     required: true
   },
   checkIn: {

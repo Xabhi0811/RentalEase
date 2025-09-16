@@ -29,7 +29,7 @@ router.get('/all', getHosting);
 
 
 // Get hosting by ID
-
+// Get hosting by ID
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -38,7 +38,7 @@ router.get('/:id', async (req, res) => {
       return res.status(400).json({ message: "Invalid property ID" });
     }
 
-    const hosting = await Hosting.findById(id);
+    const hosting = await hostingModel.findById(id); // <-- use hostingModel
     if (!hosting) return res.status(404).json({ message: "Hosting not found" });
 
     res.json(hosting);
