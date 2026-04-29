@@ -2,7 +2,7 @@
 import { useState } from "react";
 import axios from "axios";
 
-const BookingForm = ({ propertyId, token }) => {
+const Booking = ({ propertyId, token }) => {
   const [formData, setFormData] = useState({
     fullname: "",
     contactno: "",
@@ -444,4 +444,4 @@ const BookingForm = ({ propertyId, token }) => {
   );
 };
 
-export default BookingForm;
+export default Booking;

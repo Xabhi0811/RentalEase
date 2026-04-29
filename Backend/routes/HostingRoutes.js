@@ -3,13 +3,14 @@ const mongoose = require('mongoose')
 const router = express.Router();
 const { body } = require("express-validator");
 const hostingModel = require('../models/hosting');
-const {createHosting , getHosting} = require('../controllers/HostController');
+const {createHosting , getHosting ,upload }  = require('../controllers/HostController');
   // Make sure to import your Hosting model
+  const multer = require('multer');
 
 // Create hosting (Admin only)
 router.post(
   "/create",
-  
+    upload,
   [
     body("ownername").notEmpty().withMessage("Owner name is required"),
     body("placename").notEmpty().withMessage("Place name is required"),
@@ -18,7 +19,7 @@ router.post(
     body("price").isNumeric().withMessage("Price must be a number"),
     body("email").isEmail().withMessage("it must be email "),
     body("room").isNumeric().withMessage("Room count must be a number"),
-    body("Image").notEmpty().withMessage("Image URL is required"),
+    
   ], 
   createHosting
 );

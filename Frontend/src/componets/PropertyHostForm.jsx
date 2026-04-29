@@ -9,26 +9,35 @@ const PropertyHostForm = () => {
     address: '',
     contactno: '',
     location: '',
-    Image: '',
     price: '',
     room: '',
     email: ''
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState('');
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
-   // redirect after success
- const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-     const Navigate =  navigate 
+    
+    // For numeric fields, ensure we're sending numbers, not strings
+    let processedValue = value;
+    if (name === 'contactno') {
+      // Remove any non-numeric characters from contact number
+      processedValue = value.replace(/[^0-9]/g, '');
+    } else if (name === 'price' || name === 'room') {
+      // Remove any non-numeric characters except decimal point for price
+      processedValue = value.replace(/[^0-9.]/g, '');
+    }
+    
     setFormData({
       ...formData,
-      price: Number(formData.price),
-    room: Number(formData.room),
-      [name]: value
+      [name]: processedValue
     });
+
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors({
@@ -38,82 +47,155 @@ const PropertyHostForm = () => {
     }
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+    if (!validImageTypes.includes(file.type)) {
+      setErrors({
+        ...errors,
+        Image: 'Please select a valid image file (JPEG, PNG, GIF)'
+      });
+      return;
+    }
+
+    // Validate file size (10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      setErrors({
+        ...errors,
+        Image: 'Image size must be less than 10MB'
+      });
+      return;
+    }
+
+    setImageFile(file);
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+
+    // Clear any previous image errors
+    if (errors.Image) {
+      setErrors({
+        ...errors,
+        Image: ''
+      });
+    }
+  };
+
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.ownername.trim()) newErrors.ownername = 'Owner name is required';
     if (!formData.placename.trim()) newErrors.placename = 'Place name is required';
     if (!formData.address.trim()) newErrors.address = 'Address is required';
     if (!formData.contactno) newErrors.contactno = 'Contact number is required';
+    else if (!/^\d+$/.test(formData.contactno)) newErrors.contactno = 'Contact number must contain only numbers';
     if (!formData.location.trim()) newErrors.location = 'Location is required';
-    if (!formData.Image.trim()) newErrors.Image = 'Image URL is required';
+    if (!imageFile) newErrors.Image = 'Image is required';
     if (!formData.price) newErrors.price = 'Price is required';
+    else if (isNaN(parseFloat(formData.price))) newErrors.price = 'Price must be a valid number';
     if (!formData.email.trim()) newErrors.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email is invalid';
-    
+    else if (!/\S+@\S+\.\S/.test(formData.email)) newErrors.email = 'Email is invalid';
+    if (formData.room && isNaN(parseInt(formData.room))) newErrors.room = 'Room count must be a number';
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      setIsLoading(true);
-      try {
-  const response = await axios.post(
-    `${import.meta.env.VITE_BACKEND_URL}/hosting/create`,
-    formData
-  );
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (validateForm()) {
+    setIsLoading(true);
+    try {
+      // Create FormData object to send both form data and file
+      const submitData = new FormData();
 
-  if (response.status === 201) {
-    const data = response.data;
+      // Convert numeric fields properly
+      const dataToSend = {
+        ...formData,
+        contactno: formData.contactno ? parseInt(formData.contactno, 10) : null,
+        price: formData.price ? parseFloat(formData.price) : null,
+        room: formData.room ? parseInt(formData.room, 10) : null
+      };
 
-    setMessage({ text: 'Property hosted successfully!', type: 'success' });
+      // Append all form fields
+      Object.keys(dataToSend).forEach(key => {
+        if (dataToSend[key] !== null && dataToSend[key] !== "") {
+          submitData.append(key, dataToSend[key]);
+        }
+      });
 
-    // Reset form
-    setFormData({
-      ownername: '',
-      placename: '',
-      address: '',
-      contactno: '',
-      location: '',
-      Image: '',
-      price: '',
-      room: '',
-      email: ''
-    });
-
-    navigate('/'); // redirect after success
-  }
-} catch (error) {
-  console.error('Error hosting property:', error);
-  setMessage({
-    text:
-      error.response?.data?.message ||
-      'Failed to host property. Please try again.',
-    type: 'error'
-  });
-}
- finally {
-        setIsLoading(false);
+      // Append the image file (note: capital 'I')
+      if (imageFile) {
+        submitData.append("Image", imageFile);
       }
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/hosting/create`,
+        submitData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          timeout: 10000
+        }
+      );
+
+      if (response.status === 201) {
+        setMessage({ text: "Property hosted successfully!", type: "success" });
+
+        // Reset form
+        setFormData({
+          ownername: "",
+          placename: "",
+          address: "",
+          contactno: "",
+          location: "",
+          price: "",
+          room: "",
+          email: ""
+        });
+        setImageFile(null);
+        setImagePreview("");
+
+        navigate("/"); // redirect after success
+      }
+    } catch (error) {
+      console.error("Error hosting property:", error);
+      console.error("Server response:", error.response?.data);
+
+      setMessage({
+        text:
+          error.response?.data?.error ||
+          error.response?.data?.message ||
+          "Failed to host property. Please try again.",
+        type: "error"
+      });
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8 px-4 sm:px-6 lg:px-8">
       {/* Decorative elements */}
       <div className="absolute top-0 left-0 w-full h-72 bg-gradient-to-r from-blue-400/10 to-indigo-400/10"></div>
       <div className="absolute bottom-0 right-0 w-64 h-64 bg-purple-300/20 rounded-full -translate-x-20 translate-y-20"></div>
-      
+
       <div className="relative max-w-2xl mx-auto">
         <div className="bg-white/95 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-gray-100">
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full mb-4">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 极速 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               </svg>
             </div>
-            <h1 className="text-3xl font-bold  bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
               Host Your Property
             </h1>
             <p className="mt-2 text-gray-600">List your property and start earning today</p>
@@ -143,7 +225,7 @@ const PropertyHostForm = () => {
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 极速 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                   </div>
                   <input
@@ -169,7 +251,7 @@ const PropertyHostForm = () => {
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1极速-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1极速2a1 1 0 011 1v5m-4 0h4" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
                   </div>
                   <input
@@ -184,7 +266,7 @@ const PropertyHostForm = () => {
                 </div>
                 {errors.placename && <p className="mt-1 text-sm text-red-600 flex items-center">
                   <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 极速zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                   </svg>
                   {errors.placename}
                 </p>}
@@ -210,8 +292,8 @@ const PropertyHostForm = () => {
                   />
                 </div>
                 {errors.address && <p className="mt-1 text-sm text-red-600 flex items-center">
-                  <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 极速">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1极速4a1 1 0 102 0V6a1 1 0 00-1-极速z" clipRule="evenodd" />
+                  <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                   </svg>
                   {errors.address}
                 </p>}
@@ -232,7 +314,7 @@ const PropertyHostForm = () => {
                     value={formData.contactno}
                     onChange={handleChange}
                     className={`pl-10 mt-1 block w-full px-4 py-3 border ${errors.contactno ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'} rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-opacity-50 transition duration-200`}
-                    placeholder="+1 234 567 8900"
+                    placeholder="1234567890"
                   />
                 </div>
                 {errors.contactno && <p className="mt-1 text-sm text-red-600 flex items-center">
@@ -255,7 +337,7 @@ const PropertyHostForm = () => {
                     type="email"
                     id="email"
                     name="email"
-                     value={formData.email}
+                    value={formData.email}
                     onChange={handleChange}
                     className={`pl-10 mt-1 block w-full px-4 py-3 border ${errors.email ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'} rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-opacity-50 transition duration-200`}
                     placeholder="john@example.com"
@@ -263,7 +345,7 @@ const PropertyHostForm = () => {
                 </div>
                 {errors.email && <p className="mt-1 text-sm text-red-600 flex items-center">
                   <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 10a8 8 极速 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                   </svg>
                   {errors.email}
                 </p>}
@@ -275,7 +357,7 @@ const PropertyHostForm = () => {
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 极速 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                   </div>
                   <input
@@ -307,6 +389,7 @@ const PropertyHostForm = () => {
                     id="price"
                     name="price"
                     min="0"
+                    step="0.01"
                     value={formData.price}
                     onChange={handleChange}
                     className={`block w-full pl-9 pr-4 py-3 border ${errors.price ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'} rounded-xl focus:outline-none focus:ring-2 focus:ring-opacity-50 transition duration-200`}
@@ -315,7 +398,7 @@ const PropertyHostForm = () => {
                 </div>
                 {errors.price && <p className="mt-1 text-sm text-red-600 flex items-center">
                   <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1极速" clipRule="evenodd" />
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                   </svg>
                   {errors.price}
                 </p>}
@@ -340,25 +423,59 @@ const PropertyHostForm = () => {
                     placeholder="3"
                   />
                 </div>
+                {errors.room && <p className="mt-1 text-sm text-red-600 flex items-center">
+                  <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                  {errors.room}
+                </p>}
               </div>
 
               <div className="sm:col-span-2">
-                <label htmlFor="Image" className="block text-sm font-medium text-gray-700 mb-1">Image URL *</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
+                <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-1">Property Image *</label>
+                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-xl">
+                  <div className="space-y-1 text-center">
+                    {imagePreview ? (
+                      <div className="mt-2">
+                        <img
+                          src={imagePreview}
+                          alt="Preview"
+                          className="mx-auto h-40 w-full object-cover rounded-lg"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setImageFile(null);
+                            setImagePreview('');
+                          }}
+                          className="mt-2 text-sm text-red-600 hover:text-red-800"
+                        >
+                          Remove Image
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex text-sm text-gray-600 justify-center">
+                          <label
+                            htmlFor="image"
+                            className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
+                          >
+                            <span>Upload a file</span>
+                            <input
+                              id="image"
+                              name="image"
+                              type="file"
+                              className="sr-only"
+                              accept="image/*"
+                              onChange={handleImageChange}
+                            />
+                          </label>
+                          <p className="pl-1">or drag and drop</p>
+                        </div>
+                        <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                      </>
+                    )}
                   </div>
-                  <input
-                    type="url"
-                    id="Image"
-                    name="Image"
-                    value={formData.Image}
-                    onChange={handleChange}
-                    className={`pl-10 mt-1 block w-full px-4 py-3 border ${errors.Image ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'} rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-opacity-50 transition duration-200`}
-                    placeholder="https://example.com/image.jpg"
-                  />
                 </div>
                 {errors.Image && <p className="mt-1 text-sm text-red-600 flex items-center">
                   <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -379,7 +496,7 @@ const PropertyHostForm = () => {
                   <>
                     <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c1.096 3.042 3.135 5.578 5.753 6.883l-2.022-2.022zm16-5.291c0 4.418-3.582 8-8 8V24c6.627 0 12-5.373 12-12h-4z"></path>
                     </svg>
                     Processing...
                   </>
